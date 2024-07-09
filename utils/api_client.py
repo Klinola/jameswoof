@@ -36,7 +36,8 @@ api_endpoints = {
     "migrateAuth": ("get", "/user/migrate"),
     "migrate": ("post", "/user/migrate"),
     "create": ("post", "/g/create"),
-    "getGroup": ("get", "/g")
+    "getGroup": ("get", "/g"),
+    "joinGroup": ("post", "/g")
 }
 
 class APIMeta(type):
