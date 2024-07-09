@@ -1,0 +1,5 @@
+*.ipynb
+.conda
+venv
+env
+.env
