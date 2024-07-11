@@ -28,7 +28,7 @@ class frameMain ( wx.Frame ):
         self.staticTextDbPath.Wrap( -1 )
         bSizerPaths.Add( self.staticTextDbPath, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-        current_dir = os.getcwd()
+        current_dir = os.path.join(os.getcwd(), 'accounts.db')
         self.dirPickerDbPath = wx.DirPickerCtrl( self.panelMain, wx.ID_ANY, current_dir, _(u"Select a folder"), wx.DefaultPosition, wx.DefaultSize, wx.DIRP_USE_TEXTCTRL )
         bSizerPaths.Add( self.dirPickerDbPath, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 
