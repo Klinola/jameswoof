@@ -20,6 +20,9 @@ def clean_json_string(json_str):
     json_str = re.sub(r'[^\x20-\x7E]+', '', json_str)
     return json_str
 
+def ignore_lock_files(src, names):
+    return ['LOCK'] if 'LOCK' in names else []
+
 def search_tokens_in_leveldb(leveldb_path):
     search_str = "https://app.jameswoof.com"
     token = None
@@ -31,14 +34,16 @@ def search_tokens_in_leveldb(leveldb_path):
         
         if os.path.exists(temp_db_path):
             shutil.rmtree(temp_db_path)
-        shutil.copytree(leveldb_path, temp_db_path)
-
-        db = plyvel.DB(temp_db_path, create_if_missing=False, compression=None)
-        
+        shutil.copytree(leveldb_path, temp_db_path, ignore=ignore_lock_files) 
+        plyvel.repair_db(temp_db_path)
+        db = plyvel.DB(temp_db_path, compression=None)
+               
         for key, value in db:
             key_str = key.decode('utf-8', errors='ignore')
             value_str = value.decode('utf-8', errors='ignore')
             if search_str in key_str:
+                print(key_str)
+                print(value_str)
                 if "\"token\"" in value_str:
                     value_str = clean_json_string(value_str)
                     try:

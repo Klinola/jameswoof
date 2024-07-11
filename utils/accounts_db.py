@@ -1,7 +1,10 @@
 import sqlite3
+import os
 from datetime import datetime
 
 def init_db(db_path="accounts.db"):
+    if os.path.exists(db_path):
+        os.remove(db_path)
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
     
@@ -94,7 +97,7 @@ def clear_leader(folder_name, db_path="accounts.db"):
     conn.commit()
     conn.close()
 
-def set_member(folder_name, db_path="accounts.db"):
+def set_member(folder_name, leader_account, db_path="accounts.db"):
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
     
@@ -102,8 +105,9 @@ def set_member(folder_name, db_path="accounts.db"):
         UPDATE accounts
         SET is_leader = 0
         SET in_group = 1
+        SET Leader = ?
         WHERE folder_name = ?
-    ''', (folder_name,))
+    ''', (leader_account, folder_name,))
     
     conn.commit()
     conn.close()

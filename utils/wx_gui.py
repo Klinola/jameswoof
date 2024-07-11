@@ -11,10 +11,11 @@ _ = gettext.gettext
 class frameMain ( wx.Frame ):
 
     def __init__( self, parent ):
-        wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = _(u"Jameswoof Autointeraction Tools v1.0"), pos = wx.DefaultPosition, size = wx.Size( 800,600 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
+        wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = _(u"Jameswoof Autointeraction Tools v1.0"), pos = wx.DefaultPosition, 
+                           size = wx.Size( 1200,600 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
 
         self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
-
+        self.SetBackgroundColour(wx.Colour(255, 255, 255))
         bSizerMainFrame = wx.BoxSizer( wx.VERTICAL )
 
         bSizerFrameMain = wx.BoxSizer( wx.VERTICAL )
@@ -49,8 +50,8 @@ class frameMain ( wx.Frame ):
         # Adding columns
         self.m_listCtrl1.InsertColumn(0, "Select", width=50, format=wx.LIST_FORMAT_CENTER)
         self.m_listCtrl1.InsertColumn(1, "Account", width=150)
-        self.m_listCtrl1.InsertColumn(2, "Token", width=300)
-        self.m_listCtrl1.InsertColumn(3, "Code", width=100)
+        self.m_listCtrl1.InsertColumn(2, "Token", width=100)
+        self.m_listCtrl1.InsertColumn(3, "Code", width=80)
         self.m_listCtrl1.InsertColumn(4, "Last Interaction Time", width=150)
         self.m_listCtrl1.InsertColumn(5, "in Group", width=80)
         self.m_listCtrl1.InsertColumn(6, "is Leader", width=80)

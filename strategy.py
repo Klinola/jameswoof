@@ -45,7 +45,7 @@ def group_interaction(accounts, db_path):
             }
             join_response = client_member.joinGroup(data=custom_data)
             if join_response.status_code == 200:
-                set_member(member_folder_name, db_path)
+                set_member(member_folder_name, leader_folder_name, db_path)
 
 class MainApp(wx.App):
     def OnInit(self):
