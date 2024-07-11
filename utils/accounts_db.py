@@ -56,12 +56,12 @@ def get_all_accounts(db_path="accounts.db"):
 def update_last_interaction_time(folder_name, db_path="accounts.db"):
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
-    
+    formatted_time = datetime.now().strftime("%m-%d %H:%M")
     cursor.execute('''
         UPDATE accounts
         SET last_interaction_time = ?
         WHERE folder_name = ?
-    ''', (datetime.now().isoformat(), folder_name))
+    ''', (formatted_time, folder_name))
     
     conn.commit()
     conn.close()
@@ -73,6 +73,19 @@ def set_leader(folder_name, db_path="accounts.db"):
     cursor.execute('''
         UPDATE accounts
         SET is_leader = 1
+        WHERE folder_name = ?
+    ''', (folder_name,))
+    
+    conn.commit()
+    conn.close()
+
+def clear_leader(folder_name, db_path="accounts.db"):
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    
+    cursor.execute('''
+        UPDATE accounts
+        SET is_leader = 0
         WHERE folder_name = ?
     ''', (folder_name,))
     

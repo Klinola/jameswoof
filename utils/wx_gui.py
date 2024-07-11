@@ -1,16 +1,5 @@
-# -*- coding: utf-8 -*-
-
-###########################################################################
-## Python code generated with wxFormBuilder (version 4.2.1-0-g80c4cb6)
-## http://www.wxformbuilder.org/
-##
-## PLEASE DO *NOT* EDIT THIS FILE!
-###########################################################################
-
 import wx
 import wx.xrc
-import wx.dataview
-
 import gettext
 _ = gettext.gettext
 
@@ -21,7 +10,7 @@ _ = gettext.gettext
 class frameMain ( wx.Frame ):
 
     def __init__( self, parent ):
-        wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = _(u"Jameswoof Autointeraction Tools v1.0"), pos = wx.DefaultPosition, size = wx.Size( 638,500 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
+        wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = _(u"Jameswoof Autointeraction Tools v1.0"), pos = wx.DefaultPosition, size = wx.Size( 800,600 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
 
         self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 
@@ -34,29 +23,35 @@ class frameMain ( wx.Frame ):
 
         bSizerList = wx.BoxSizer( wx.HORIZONTAL )
 
-        self.m_dataViewListCtrl4 = wx.dataview.DataViewListCtrl( self.panelMain, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.dataview.DV_HORIZ_RULES|wx.dataview.DV_ROW_LINES|wx.dataview.DV_VERT_RULES )
-        self.m_dataViewListColumn1 = self.m_dataViewListCtrl4.AppendTextColumn( _(u"Account"), wx.dataview.DATAVIEW_CELL_INERT, -1, wx.ALIGN_LEFT, wx.dataview.DATAVIEW_COL_RESIZABLE )
-        self.m_dataViewListColumn2 = self.m_dataViewListCtrl4.AppendTextColumn( _(u"Token"), wx.dataview.DATAVIEW_CELL_INERT, -1, wx.ALIGN_LEFT, wx.dataview.DATAVIEW_COL_RESIZABLE )
-        self.m_dataViewListColumn3 = self.m_dataViewListCtrl4.AppendTextColumn( _(u"Code"), wx.dataview.DATAVIEW_CELL_INERT, -1, wx.ALIGN_LEFT, wx.dataview.DATAVIEW_COL_RESIZABLE )
-        self.m_dataViewListColumn4 = self.m_dataViewListCtrl4.AppendTextColumn( _(u"Last Interaction Time"), wx.dataview.DATAVIEW_CELL_INERT, -1, wx.ALIGN_LEFT, wx.dataview.DATAVIEW_COL_RESIZABLE )
-        self.m_dataViewListColumn5 = self.m_dataViewListCtrl4.AppendTextColumn( _(u"in Group"), wx.dataview.DATAVIEW_CELL_INERT, -1, wx.ALIGN_LEFT, wx.dataview.DATAVIEW_COL_RESIZABLE )
-        self.m_dataViewListColumn6 = self.m_dataViewListCtrl4.AppendTextColumn( _(u"is Leader"), wx.dataview.DATAVIEW_CELL_INERT, -1, wx.ALIGN_LEFT, wx.dataview.DATAVIEW_COL_RESIZABLE )
-        self.m_dataViewListColumn7 = self.m_dataViewListCtrl4.AppendTextColumn( _(u"Leader"), wx.dataview.DATAVIEW_CELL_INERT, -1, wx.ALIGN_LEFT, wx.dataview.DATAVIEW_COL_RESIZABLE )
-        bSizerList.Add( self.m_dataViewListCtrl4, 1, wx.ALL|wx.EXPAND, 5 )
+        self.m_listCtrl1 = wx.ListCtrl( self.panelMain, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LC_REPORT|wx.LC_HRULES|wx.LC_VRULES )
+        bSizerList.Add( self.m_listCtrl1, 1, wx.ALL|wx.EXPAND, 5 )
 
+        # Adding columns
+        self.m_listCtrl1.InsertColumn(0, "Select", width=50, format=wx.LIST_FORMAT_CENTER)
+        self.m_listCtrl1.InsertColumn(1, "Account", width=150)
+        self.m_listCtrl1.InsertColumn(2, "Token", width=300)
+        self.m_listCtrl1.InsertColumn(3, "Code", width=100)
+        self.m_listCtrl1.InsertColumn(4, "Last Interaction Time", width=150)
+        self.m_listCtrl1.InsertColumn(5, "in Group", width=80)
+        self.m_listCtrl1.InsertColumn(6, "is Leader", width=80)
+        self.m_listCtrl1.InsertColumn(7, "Leader", width=100)
 
         bSizerMainPanel.Add( bSizerList, 1, wx.EXPAND, 5 )
 
         bSizerFunctions = wx.BoxSizer( wx.HORIZONTAL )
 
-        self.m_button1 = wx.Button( self.panelMain, wx.ID_ANY, _(u"Start/Stop"), wx.DefaultPosition, wx.DefaultSize, 0 )
-        bSizerFunctions.Add( self.m_button1, 0, wx.ALL, 5 )
+        self.checkBoxSelectAll = wx.CheckBox(self.panelMain, wx.ID_ANY, _(u"Select All"), wx.DefaultPosition, wx.DefaultSize, 0)
+        bSizerFunctions.Add(self.checkBoxSelectAll, 0, wx.ALL, 5)
+        self.checkBoxSelectAll.Bind(wx.EVT_CHECKBOX, self.on_select_all)
 
-        self.m_button2 = wx.Button( self.panelMain, wx.ID_ANY, _(u"Group"), wx.DefaultPosition, wx.DefaultSize, 0 )
-        bSizerFunctions.Add( self.m_button2, 0, wx.ALL, 5 )
+        self.buttonStart = wx.Button( self.panelMain, wx.ID_ANY, _(u"Start/Stop"), wx.DefaultPosition, wx.DefaultSize, 0 )
+        bSizerFunctions.Add( self.buttonStart, 0, wx.ALL, 5 )
 
-        self.m_button3 = wx.Button( self.panelMain, wx.ID_ANY, _(u"Init"), wx.DefaultPosition, wx.DefaultSize, 0 )
-        bSizerFunctions.Add( self.m_button3, 0, wx.ALL, 5 )
+        self.buttonGroup = wx.Button( self.panelMain, wx.ID_ANY, _(u"Group"), wx.DefaultPosition, wx.DefaultSize, 0 )
+        bSizerFunctions.Add( self.buttonGroup, 0, wx.ALL, 5 )
+
+        self.buttonInit = wx.Button( self.panelMain, wx.ID_ANY, _(u"Init"), wx.DefaultPosition, wx.DefaultSize, 0 )
+        bSizerFunctions.Add( self.buttonInit, 0, wx.ALL, 5 )
 
         bSizer8 = wx.BoxSizer( wx.VERTICAL )
 
@@ -105,7 +100,9 @@ class frameMain ( wx.Frame ):
         self.Centre( wx.BOTH )
 
         # Connect Events
-        self.m_dataViewListCtrl4.Bind( wx.dataview.EVT_DATAVIEW_ITEM_ACTIVATED, self.m_dataViewListCtrl4OnDataViewListCtrlItemActivated, id = wx.ID_ANY )
+        self.buttonStart.Bind( wx.EVT_BUTTON, self.buttonStartOnButtonClick )
+        self.buttonGroup.Bind( wx.EVT_BUTTON, self.buttonGroupOnButtonClick )
+        self.buttonInit.Bind( wx.EVT_BUTTON, self.buttonInitOnButtonClick )
         self.Bind( wx.EVT_MENU, self.menuItemFileNewOnMenuSelection, id = self.menuItemFileNew.GetId() )
         self.Bind( wx.EVT_MENU, self.menuItemFileOpenOnMenuSelection, id = self.menuItemFileOpen.GetId() )
 
@@ -114,7 +111,13 @@ class frameMain ( wx.Frame ):
 
 
     # Virtual event handlers, override them in your derived class
-    def m_dataViewListCtrl4OnDataViewListCtrlItemActivated( self, event ):
+    def buttonStartOnButtonClick( self, event ):
+        event.Skip()
+
+    def buttonGroupOnButtonClick( self, event ):
+        event.Skip()
+
+    def buttonInitOnButtonClick( self, event ):
         event.Skip()
 
     def menuItemFileNewOnMenuSelection( self, event ):
@@ -123,4 +126,8 @@ class frameMain ( wx.Frame ):
     def menuItemFileOpenOnMenuSelection( self, event ):
         event.Skip()
 
-
+    def on_select_all(self, event):
+        check = self.checkBoxSelectAll.GetValue()
+        item_count = self.m_listCtrl1.GetItemCount()
+        for index in range(item_count):
+            self.m_listCtrl1.CheckItem(index, check)
