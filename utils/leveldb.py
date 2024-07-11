@@ -2,6 +2,8 @@ import os
 import plyvel
 import json
 import re
+import shutil
+
 
 def get_account_folders(cache_path):
     account_folders = []
@@ -23,21 +25,15 @@ def search_tokens_in_leveldb(leveldb_path):
     token = None
     invite_code = None
 
+    # copy database
+    temp_db_path = leveldb_path + "_copy"
     try:
-        try:
-            # open leveldb database
-            db = plyvel.DB(leveldb_path, compression=None)
-        except plyvel.CorruptionError:
-            print(f"Database at {leveldb_path} is corrupted, attempting repair...")
-            plyvel.repair_db(leveldb_path)
         
-        try:
-            # open leveldb database
-            db = plyvel.DB(leveldb_path, compression=None)
-            print("Database opened successfully after repair.")
-        except plyvel.CorruptionError:
-            print("Database is still corrupted after repair.")
-            print("Error message:", e)
+        if os.path.exists(temp_db_path):
+            shutil.rmtree(temp_db_path)
+        shutil.copytree(leveldb_path, temp_db_path)
+
+        db = plyvel.DB(temp_db_path, create_if_missing=False, compression=None)
         
         for key, value in db:
             key_str = key.decode('utf-8', errors='ignore')
@@ -62,10 +58,13 @@ def search_tokens_in_leveldb(leveldb_path):
                         print("Value string that caused the error:", value_str)
                         
         db.close()
+        # delete copy
+        shutil.rmtree(temp_db_path)
     except Exception as e:
         print(f"Error accessing LevelDB at {leveldb_path}: {e}")
     
     return {"token": token, "invite_code": invite_code}
+
 
 def init_accounts(cache_path):
     account_folders = get_account_folders(cache_path)
