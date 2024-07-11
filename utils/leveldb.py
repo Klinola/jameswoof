@@ -22,6 +22,7 @@ def clean_json_string(json_str):
 
 def ignore_lock_files(src, names):
     return ['LOCK'] if 'LOCK' in names else []
+    
 
 def search_tokens_in_leveldb(leveldb_path):
     search_str = "https://app.jameswoof.com"
