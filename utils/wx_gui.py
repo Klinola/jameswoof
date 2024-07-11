@@ -1,4 +1,5 @@
 import wx
+import os
 import wx.xrc
 import gettext
 _ = gettext.gettext
@@ -21,9 +22,28 @@ class frameMain ( wx.Frame ):
         self.panelMain = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
         bSizerMainPanel = wx.BoxSizer( wx.VERTICAL )
 
+        bSizerPaths = wx.BoxSizer( wx.HORIZONTAL )
+
+        self.staticTextDbPath = wx.StaticText( self.panelMain, wx.ID_ANY, _(u"DB Path:"), wx.DefaultPosition, wx.DefaultSize, 0 )
+        self.staticTextDbPath.Wrap( -1 )
+        bSizerPaths.Add( self.staticTextDbPath, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+        current_dir = os.path.join(os.getcwd(), "account.db") # Get currrent working directory
+        self.dirPickerDbPath = wx.DirPickerCtrl( self.panelMain, wx.ID_ANY, current_dir, _(u"Select a folder"), wx.DefaultPosition, wx.DefaultSize, wx.DIRP_USE_TEXTCTRL )
+        bSizerPaths.Add( self.dirPickerDbPath, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+        self.staticTextCachePath = wx.StaticText( self.panelMain, wx.ID_ANY, _(u"Cache Path:"), wx.DefaultPosition, wx.DefaultSize, 0 )
+        self.staticTextCachePath.Wrap( -1 )
+        bSizerPaths.Add( self.staticTextCachePath, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+        self.dirPickerCachePath = wx.DirPickerCtrl( self.panelMain, wx.ID_ANY, wx.EmptyString, _(u"Select a folder"), wx.DefaultPosition, wx.DefaultSize, wx.DIRP_USE_TEXTCTRL )
+        bSizerPaths.Add( self.dirPickerCachePath, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+        bSizerMainPanel.Add( bSizerPaths, 0, wx.EXPAND, 5 )
+
         bSizerList = wx.BoxSizer( wx.HORIZONTAL )
 
-        self.m_listCtrl1 = wx.ListCtrl( self.panelMain, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LC_REPORT|wx.LC_HRULES|wx.LC_VRULES )
+        self.m_listCtrl1 = wx.ListCtrl( self.panelMain, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LC_REPORT|wx.LC_HRULES|wx.LC_VRULES|wx.LC_SINGLE_SEL )
         bSizerList.Add( self.m_listCtrl1, 1, wx.ALL|wx.EXPAND, 5 )
 
         # Adding columns

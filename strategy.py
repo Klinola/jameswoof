@@ -1,5 +1,5 @@
 import wx
-import sqlite3
+import os
 from datetime import datetime
 from utils.leveldb import init_accounts
 from utils.api_client import APIClient
@@ -10,9 +10,9 @@ from utils.accounts_db import (
     set_leader, update_invite_code, clear_leader
 )
 from utils.wx_gui import frameMain
-cache_path = "/mnt/c/Users/Klinola/repos/jameswoof/cache"
+
 # 单个账户的每日操作
-def daily_interaction(account, db_path="accounts.db"):
+def daily_interaction(account, db_path):
     folder_name, token, invite_code, account_id, last_interaction_time, in_group, is_leader, leader = account[1:]
     client = APIClient(token)
     client.wakeup()
@@ -21,8 +21,8 @@ def daily_interaction(account, db_path="accounts.db"):
     update_last_interaction_time(folder_name, db_path)
 
 # 组队操作
-def group_interaction(accounts, db_path="accounts.db"):
-    leader = accounts[1]
+def group_interaction(accounts, db_path):
+    leader = accounts[0]
     leader_folder_name, leader_token, leader_invite_code, leader_account_id, leader_last_interaction_time, leader_in_group, leader_is_leader, leader_leader = leader[1:]
     client_leader = APIClient(leader_token)
     client_leader.create()
@@ -53,7 +53,11 @@ class MainApp(wx.App):
         return True
 
     def on_start_stop(self, event):
-        db_path = "accounts.db"
+        db_path = self.frame.dirPickerDbPath.GetPath()
+        if not db_path:
+            wx.MessageBox("Please select a DB path.", "Error", wx.OK | wx.ICON_ERROR)
+            return
+            
         selected_accounts = self.get_selected_accounts()
 
         # 每日交互
@@ -63,7 +67,10 @@ class MainApp(wx.App):
         self.update_account_list()
 
     def on_group(self, event):
-        db_path = "accounts.db"
+        db_path = self.frame.dirPickerDbPath.GetPath()
+        if not db_path:
+            wx.MessageBox("Please select a DB path.", "Error", wx.OK | wx.ICON_ERROR)
+            return
         selected_accounts = self.get_selected_accounts()
         
         # 组队交互
@@ -75,15 +82,21 @@ class MainApp(wx.App):
         self.update_account_list()
 
     def on_init(self, event):
-        cache_path = "/mnt/c/Users/Klinola/repos/jameswoof/cache"
-        db_path = "accounts.db"
+        cache_path = self.frame.dirPickerCachePath.GetPath()
+        db_path = self.frame.dirPickerDbPath.GetPath()
+        if not cache_path or not db_path:
+            wx.MessageBox("Please select both Cache and DB paths.", "Error", wx.OK | wx.ICON_ERROR)
+            return
         init_db(db_path)
         load_accounts_into_db(cache_path, init_accounts, db_path)
 
         self.update_account_list()
 
     def update_account_list(self):
-        db_path = "accounts.db"
+        db_path = self.frame.dirPickerDbPath.GetPath()
+        if not db_path:
+            wx.MessageBox("Please select a DB path.", "Error", wx.OK | wx.ICON_ERROR)
+            return
         accounts = get_all_accounts(db_path)
         
         self.frame.m_listCtrl1.DeleteAllItems()
@@ -98,7 +111,10 @@ class MainApp(wx.App):
             self.frame.m_listCtrl1.SetItem(index, 7, account[8] or "")
 
     def get_selected_accounts(self):
-        db_path = "accounts.db"
+        db_path = self.frame.dirPickerDbPath.GetPath()
+        if not db_path:
+            wx.MessageBox("Please select a DB path.", "Error", wx.OK | wx.ICON_ERROR)
+            return
         accounts = get_all_accounts(db_path)
         selected_accounts = []
         item_count = self.frame.m_listCtrl1.GetItemCount()
@@ -110,4 +126,3 @@ class MainApp(wx.App):
 if __name__ == "__main__":
     app = MainApp(False)
     app.MainLoop()
-        
