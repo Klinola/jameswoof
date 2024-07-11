@@ -7,37 +7,45 @@ from utils.utils import get_timestamp
 from utils.accounts_db import (
     init_db, insert_accounts, load_accounts_into_db,
     get_all_accounts, update_last_interaction_time, 
-    set_leader, update_invite_code, clear_leader
+    set_leader, update_invite_code, clear_leader, set_member, update_status
 )
 from utils.wx_gui import frameMain
 
 # 单个账户的每日操作
 def daily_interaction(account, db_path):
-    folder_name, token, invite_code, account_id, last_interaction_time, in_group, is_leader, leader = account[1:]
+    folder_name, token, invite_code, account_id, last_interaction_time, in_group, is_leader, leader, status = account[1:]
+    if status != 'incomplete':
+        return
+
     client = APIClient(token)
-    client.wakeup()
-    client.getDailyReward()
+    wakeup_response = client.wakeup()
+    reward_response = client.getDailyReward()
     
+    if wakeup_response.status_code == 200 and reward_response.status_code == 200:
+        update_status(folder_name, 'complete', db_path)
+
     update_last_interaction_time(folder_name, db_path)
 
 # 组队操作
 def group_interaction(accounts, db_path):
     leader = accounts[0]
-    leader_folder_name, leader_token, leader_invite_code, leader_account_id, leader_last_interaction_time, leader_in_group, leader_is_leader, leader_leader = leader[1:]
+    leader_folder_name, leader_token, leader_invite_code, leader_account_id, leader_last_interaction_time, leader_in_group, leader_is_leader, leader_leader, status = leader[1:]
     client_leader = APIClient(leader_token)
-    client_leader.create()
-    set_leader(leader_folder_name, db_path)
-    
+    create_response = client_leader.create()
+    if create_response.status_code == 200:
+        set_leader(leader_folder_name, db_path)
 
     for member in accounts[1:]:
-        member_folder_name, member_token, member_invite_code, member_account_id, member_last_interaction_time, member_in_group, member_is_leader, member_leader = member[1:]
-        clear_leader(member_folder_name, db_path)
-        client_member = APIClient(member_token)
-        custom_data = {
-            "code": leader_invite_code,
-            "uuid": get_timestamp()
-        }
-        client_member.joinGroup(data=custom_data)
+        member_folder_name, member_token, member_invite_code, member_account_id, member_last_interaction_time, member_in_group, member_is_leader, member_leader, status = member[1:]
+        if member_in_group == 0:
+            client_member = APIClient(member_token)
+            custom_data = {
+                "code": leader_invite_code,
+                "uuid": get_timestamp()
+            }
+            join_response = client_member.joinGroup(data=custom_data)
+            if join_response.status_code == 200:
+                set_member(member_folder_name, db_path)
 
 class MainApp(wx.App):
     def OnInit(self):
@@ -109,6 +117,7 @@ class MainApp(wx.App):
             self.frame.m_listCtrl1.SetItem(index, 5, str(account[6]))
             self.frame.m_listCtrl1.SetItem(index, 6, str(account[7]))
             self.frame.m_listCtrl1.SetItem(index, 7, account[8] or "")
+            self.frame.m_listCtrl1.SetItem(index, 8, account[9] or "")
 
     def get_selected_accounts(self):
         db_path = self.frame.dirPickerDbPath.GetPath()

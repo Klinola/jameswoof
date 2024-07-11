@@ -1,6 +1,6 @@
 import wx
-import os
 import wx.xrc
+import os
 import gettext
 _ = gettext.gettext
 
@@ -28,7 +28,7 @@ class frameMain ( wx.Frame ):
         self.staticTextDbPath.Wrap( -1 )
         bSizerPaths.Add( self.staticTextDbPath, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-        current_dir = os.path.join(os.getcwd(), "account.db") # Get currrent working directory
+        current_dir = os.getcwd()
         self.dirPickerDbPath = wx.DirPickerCtrl( self.panelMain, wx.ID_ANY, current_dir, _(u"Select a folder"), wx.DefaultPosition, wx.DefaultSize, wx.DIRP_USE_TEXTCTRL )
         bSizerPaths.Add( self.dirPickerDbPath, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 
@@ -55,6 +55,7 @@ class frameMain ( wx.Frame ):
         self.m_listCtrl1.InsertColumn(5, "in Group", width=80)
         self.m_listCtrl1.InsertColumn(6, "is Leader", width=80)
         self.m_listCtrl1.InsertColumn(7, "Leader", width=100)
+        self.m_listCtrl1.InsertColumn(8, "Status", width=100)
 
         bSizerMainPanel.Add( bSizerList, 1, wx.EXPAND, 5 )
 

@@ -24,8 +24,20 @@ def search_tokens_in_leveldb(leveldb_path):
     invite_code = None
 
     try:
-        # open leveldb database
-        db = plyvel.DB(leveldb_path, compression=None)
+        try:
+            # open leveldb database
+            db = plyvel.DB(leveldb_path, compression=None)
+        except plyvel.CorruptionError:
+            print(f"Database at {leveldb_path} is corrupted, attempting repair...")
+            plyvel.repair_db(leveldb_path)
+        
+        try:
+            # open leveldb database
+            db = plyvel.DB(leveldb_path, compression=None)
+            print("Database opened successfully after repair.")
+        except plyvel.CorruptionError:
+            print("Database is still corrupted after repair.")
+            print("Error message:", e)
         
         for key, value in db:
             key_str = key.decode('utf-8', errors='ignore')

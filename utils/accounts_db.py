@@ -16,7 +16,8 @@ def init_db(db_path="accounts.db"):
             last_interaction_time TEXT,
             in_group INTEGER DEFAULT 0,
             is_leader INTEGER DEFAULT 0,
-            leader TEXT
+            leader TEXT,
+            status TEXT DEFAULT 'incomplete'
         )
     ''')
     
@@ -73,6 +74,7 @@ def set_leader(folder_name, db_path="accounts.db"):
     cursor.execute('''
         UPDATE accounts
         SET is_leader = 1
+        SET in_group = 1
         WHERE folder_name = ?
     ''', (folder_name,))
     
@@ -92,6 +94,20 @@ def clear_leader(folder_name, db_path="accounts.db"):
     conn.commit()
     conn.close()
 
+def set_member(folder_name, db_path="accounts.db"):
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    
+    cursor.execute('''
+        UPDATE accounts
+        SET is_leader = 0
+        SET in_group = 1
+        WHERE folder_name = ?
+    ''', (folder_name,))
+    
+    conn.commit()
+    conn.close()
+
 def update_invite_code(folder_name, invite_code, db_path="accounts.db"):
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
@@ -101,6 +117,19 @@ def update_invite_code(folder_name, invite_code, db_path="accounts.db"):
         SET invite_code = ?
         WHERE folder_name = ?
     ''', (invite_code, folder_name))
+    
+    conn.commit()
+    conn.close()
+
+def update_status(folder_name, status, db_path="accounts.db"):
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    
+    cursor.execute('''
+        UPDATE accounts
+        SET status = ?
+        WHERE folder_name = ?
+    ''', (status, folder_name))
     
     conn.commit()
     conn.close()

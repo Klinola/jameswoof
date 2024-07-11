@@ -20,6 +20,7 @@ def post_request(token, url, extra_headers=None, custom_data=None):
     url = "https://api.jameswoof.com" + url
     response = requests.post(url, headers=headers, data=data)
     print(response.status_code)
+    print(decrypt_response(token, response.text))
     return response
 
 def get_request(token, url, extra_headers=None, custom_data=None):
@@ -33,6 +34,7 @@ def get_request(token, url, extra_headers=None, custom_data=None):
     url = "https://api.jameswoof.com" + url + "?sign=" + sig
     response = requests.get(url, headers=headers)
     print(response.status_code)
+    print(decrypt_response(token, response.text))
     return response
 
 def aes_encrypt(data, key):
